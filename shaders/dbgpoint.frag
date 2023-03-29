@@ -2,10 +2,11 @@
     Copyright © 2020, Inochi2D Project
     Distributed under the 2-Clause BSD License, see LICENSE file.
     
-    Authors: Luna Nielsen
+    Authors: Luna Nielsen, Noeme2D
 */
-#version 330
-layout(location = 0) out vec4 outColor;
+#version 100
+#extension GL_OES_standard_derivatives : enable
+precision highp float;
 
 uniform vec4 color;
 
@@ -22,5 +23,5 @@ void main() {
 
     // apply delta
     alpha = 1.0 - smoothstep(1.0 - epsilon, 1.0 + epsilon, r);
-    outColor = color * alpha;
+    gl_FragColor = color * alpha;
 }

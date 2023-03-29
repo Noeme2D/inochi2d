@@ -2,14 +2,11 @@
     Copyright © 2020, Inochi2D Project
     Distributed under the 2-Clause BSD License, see LICENSE file.
     
-    Authors: Luna Nielsen
+    Authors: Luna Nielsen, Noeme2D
 */
-#version 330
-in vec2 texUVs;
-
-layout(location = 0) out vec4 outAlbedo;
-layout(location = 1) out vec4 outEmissive;
-layout(location = 2) out vec4 outBump;
+#version 100
+precision highp float;
+varying vec2 texUVs;
 
 uniform sampler2D albedo;
 uniform sampler2D emissive;
@@ -21,17 +18,17 @@ uniform vec3 screenColor;
 
 void main() {
     // Sample texture
-    vec4 texColor = texture(albedo, texUVs);
+    vec4 texColor = texture2D(albedo, texUVs);
 
     // Screen color math
     vec3 screenOut = vec3(1.0) - ((vec3(1.0)-(texColor.xyz)) * (vec3(1.0)-(screenColor*texColor.a)));
     
     // Multiply color math + opacity application.
-    outAlbedo = vec4(screenOut.xyz, texColor.a) * vec4(multColor.xyz, 1) * opacity;
+    gl_FragData[0] = vec4(screenOut.xyz, texColor.a) * vec4(multColor.xyz, 1) * opacity;
 
     // Emissive
-    outEmissive = texture(emissive, texUVs) * outAlbedo.a;
+    gl_FragData[1] = texture2D(emissive, texUVs) * gl_FragData[0].a;
 
     // Bumpmap
-    outBump = texture(bumpmap, texUVs) * outAlbedo.a;
+    gl_FragData[2] = texture2D(bumpmap, texUVs) * gl_FragData[0].a;
 }

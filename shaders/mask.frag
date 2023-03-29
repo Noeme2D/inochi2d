@@ -2,11 +2,11 @@
     Copyright © 2020, Inochi2D Project
     Distributed under the 2-Clause BSD License, see LICENSE file.
     
-    Authors: Luna Nielsen
+    Authors: Luna Nielsen, Noeme2D
 */
-#version 330
-out vec4 outColor;
+#version 100
+precision highp float;
 
 void main() {
-    outColor = vec4(0, 0, 0, 1);
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
 }
