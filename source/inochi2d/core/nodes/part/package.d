@@ -60,8 +60,6 @@ package(inochi2d) {
             partShader = new Shader(import("basic/basic.vert"), import("basic/basic.frag"));
             partMaskShader = new Shader(import("basic/basic.vert"), import("basic/basic-mask.frag"));
 
-            incDrawableBindVAO();
-
             partShader.use();
             partShader.setUniform(partShader.getUniformLocation("albedo"), 0);
             mvp = partShader.getUniformLocation("mvp");
@@ -165,8 +163,6 @@ private:
         // In some cases this may happen
         if (textures.length == 0) return;
 
-        // Bind the vertex array
-        incDrawableBindVAO();
         static if (isMask) {
             partMaskShader.use();
             partMaskShader.setUniform(offset, data.origin);
@@ -712,9 +708,6 @@ void inDrawTextureAtPart(Texture texture, Part part) {
     const float texWidthP = texture.width()/2;
     const float texHeightP = texture.height()/2;
 
-    // Bind the vertex array
-    incDrawableBindVAO();
-
     partShader.use();
     partShader.setUniform(mvp, 
         inGetCamera().matrix * 
@@ -769,9 +762,6 @@ void inDrawTextureAtPosition(Texture texture, vec2 position, float opacity = 1, 
     const float texWidthP = texture.width()/2;
     const float texHeightP = texture.height()/2;
 
-    // Bind the vertex array
-    incDrawableBindVAO();
-
     partShader.use();
     partShader.setUniform(mvp, 
         inGetCamera().matrix * 
@@ -824,9 +814,6 @@ void inDrawTextureAtPosition(Texture texture, vec2 position, float opacity = 1, 
     Draws a texture at the transform of the specified part
 */
 void inDrawTextureAtRect(Texture texture, rect area, rect uvs = rect(0, 0, 1, 1), float opacity = 1, vec3 color = vec3(1, 1, 1), vec3 screenColor = vec3(0, 0, 0), Shader s = null, Camera cam = null) {
-
-    // Bind the vertex array
-    incDrawableBindVAO();
 
     if (!s) s = partShader;
     if (!cam) cam = inGetCamera();

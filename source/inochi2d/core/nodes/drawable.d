@@ -23,21 +23,9 @@ import bindbc.opengl;
 import std.exception;
 import inochi2d.core;
 
-private GLuint drawableVAO;
-
 package(inochi2d) {
     void inInitDrawable() {
-        version(InDoesRender) glGenVertexArrays(1, &drawableVAO);
-    }
 
-
-    /**
-        Binds the internal vertex array for rendering
-    */
-    void incDrawableBindVAO() {
-
-        // Bind our vertex array
-        glBindVertexArray(drawableVAO);
     }
 
     bool doGenerateBounds = false;
