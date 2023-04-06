@@ -6,6 +6,14 @@
     
     Authors: Luna Nielsen
 */
+
+/*
+    Inochi2D OpenGL ES 2.0 Port
+    Copyright © 2023, Noeme2D Workgroup
+    Distributed under the 2-Clause BSD License, see LICENSE file.
+    
+    Authors: Leo Li, Ruiqi Niu
+*/
 module inochi2d.core.nodes.composite;
 import inochi2d.core.nodes.common;
 import inochi2d.core.nodes;
@@ -45,8 +53,6 @@ package(inochi2d) {
             gMultColor = cShader.getUniformLocation("multColor");
             gScreenColor = cShader.getUniformLocation("screenColor");
             cShader.setUniform(cShader.getUniformLocation("albedo"), 0);
-            cShader.setUniform(cShader.getUniformLocation("emissive"), 1);
-            cShader.setUniform(cShader.getUniformLocation("bumpmap"), 2);
 
             cShaderMask = new Shader(
                 import("basic/composite.vert"),

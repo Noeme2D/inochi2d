@@ -6,6 +6,14 @@
     
     Authors: Luna Nielsen
 */
+
+/*
+    Inochi2D OpenGL ES 2.0 Port
+    Copyright © 2023, Noeme2D Workgroup
+    Distributed under the 2-Clause BSD License, see LICENSE file.
+    
+    Authors: Leo Li, Ruiqi Niu
+*/
 module inochi2d.core.nodes.part;
 import inochi2d.integration;
 import inochi2d.fmt;
@@ -56,19 +64,14 @@ package(inochi2d) {
 
             partShader.use();
             partShader.setUniform(partShader.getUniformLocation("albedo"), 0);
-            partShader.setUniform(partShader.getUniformLocation("emissive"), 1);
-            partShader.setUniform(partShader.getUniformLocation("bumpmap"), 2);
             mvp = partShader.getUniformLocation("mvp");
             offset = partShader.getUniformLocation("offset");
             gopacity = partShader.getUniformLocation("opacity");
             gMultColor = partShader.getUniformLocation("multColor");
             gScreenColor = partShader.getUniformLocation("screenColor");
-            gEmissionStrength = partShader.getUniformLocation("emissionStrength");
 
             partMaskShader.use();
             partMaskShader.setUniform(partMaskShader.getUniformLocation("albedo"), 0);
-            partMaskShader.setUniform(partMaskShader.getUniformLocation("emissive"), 1);
-            partMaskShader.setUniform(partMaskShader.getUniformLocation("bumpmap"), 2);
             mmvp = partMaskShader.getUniformLocation("mvp");
             mthreshold = partMaskShader.getUniformLocation("threshold");
             
@@ -175,11 +178,8 @@ private:
             partShader.setUniform(offset, data.origin);
             partShader.setUniform(mvp, inGetCamera().matrix * transform.matrix());
             partShader.setUniform(gopacity, clamp(offsetOpacity * opacity, 0, 1));
-            partShader.setUniform(gEmissionStrength, emissionStrength*offsetEmissionStrength);
 
             partShader.setUniform(partShader.getUniformLocation("albedo"), 0);
-            partShader.setUniform(partShader.getUniformLocation("emissive"), 1);
-            partShader.setUniform(partShader.getUniformLocation("bumpmap"), 2);
             
             vec3 clampedColor = tint;
             if (!offsetTint.x.isNaN) clampedColor.x = clamp(tint.x*offsetTint.x, 0, 1);
