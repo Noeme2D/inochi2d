@@ -25,7 +25,6 @@ public import inochi2d.core.param;
 public import inochi2d.core.automation;
 public import inochi2d.core.animation;
 public import inochi2d.integration;
-import inochi2d.core.dbg;
 
 import bindbc.opengl;
 import inochi2d.math;
@@ -151,7 +150,6 @@ package(inochi2d) {
         inInitPart();
         inInitMask();
         inInitComposite();
-        version(InDoesRender) inInitDebug();
 
         inParameterSetFactory((data) {
             import fghj : deserializeValue;
