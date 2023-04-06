@@ -73,7 +73,6 @@ private {
     int inViewportWidth;
     int inViewportHeight;
 
-    GLuint sceneVAO;
     GLuint sceneVBO;
 
     GLuint fBuffer; // a framebuffer for final rendering
@@ -95,9 +94,6 @@ private {
 
     void renderScene(vec4 area, PostProcessingShader shaderToUse, GLuint albedo) {
         glViewport(0, 0, cast(int)area.z, cast(int)area.w);
-
-        // Bind our vertex array
-        glBindVertexArray(sceneVAO);
         
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);
@@ -167,7 +163,7 @@ package(inochi2d) {
             
             // Shader for scene
             basicSceneShader = PostProcessingShader(new Shader(import("scene.vert"), import("scene.frag")));
-            glGenVertexArrays(1, &sceneVAO);
+
             glGenBuffers(1, &sceneVBO);
 
             // Generate the framebuffer we'll be using to render the model and composites
@@ -206,7 +202,6 @@ vec3 inSceneAmbientLight = vec3(1, 1, 1);
     Begins rendering to the framebuffer
 */
 void inBeginScene() {
-    glBindVertexArray(sceneVAO);
     glEnable(GL_BLEND);
     glEnablei(GL_BLEND, 0);
     glEnablei(GL_BLEND, 1);
