@@ -222,7 +222,6 @@ void inBeginScene() {
     // Bind our framebuffer
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fBuffer);
 
-    glDrawBuffers(1, [GL_COLOR_ATTACHMENT0].ptr);
     glClearColor(inClearColor.r, inClearColor.g, inClearColor.b, inClearColor.a);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -231,7 +230,6 @@ void inBeginScene() {
 
     // Finally we render to all buffers
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    glDrawBuffers(1, [GL_COLOR_ATTACHMENT0].ptr);
 }
 
 /**
@@ -244,7 +242,6 @@ void inBeginComposite() {
     isCompositing = true;
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, cfBuffer);
-    glDrawBuffers(1, [GL_COLOR_ATTACHMENT0].ptr);
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -263,7 +260,6 @@ void inEndComposite() {
     isCompositing = false;
 
     glBindFramebuffer(GL_FRAMEBUFFER, fBuffer);
-    glDrawBuffers(1, [GL_COLOR_ATTACHMENT0].ptr);
     glFlush();
 }
 
@@ -280,7 +276,6 @@ void inEndScene() {
     glEnable(GL_CULL_FACE);
     glDisable(GL_BLEND);
     glFlush();
-    glDrawBuffers(1, [GL_COLOR_ATTACHMENT0].ptr);
 }
 
 /**
