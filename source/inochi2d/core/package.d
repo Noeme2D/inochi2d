@@ -320,24 +320,6 @@ void incCompositePrepareRender() {
 }
 
 /**
-    Gets the Inochi2D framebuffer 
-
-    DO NOT MODIFY THIS IMAGE!
-*/
-GLuint inGetFramebuffer() {
-    return fBuffer;
-}
-
-/**
-    Gets the Inochi2D framebuffer render image
-
-    DO NOT MODIFY THIS IMAGE!
-*/
-GLuint inGetRenderImage() {
-    return fAlbedo;
-}
-
-/**
     Gets the Inochi2D composite render image
 
     DO NOT MODIFY THIS IMAGE!
@@ -404,32 +386,6 @@ void inGetViewport(out int width, out int height) nothrow {
 */
 size_t inViewportDataLength() {
     return inViewportWidth * inViewportHeight * 4;
-}
-
-/**
-    Dumps viewport data to texture stream
-*/
-void inDumpViewport(ref ubyte[] dumpTo) {
-    import std.exception : enforce;
-    enforce(dumpTo.length >= inViewportDataLength(), "Invalid data destination length for inDumpViewport");
-    glBindTexture(GL_TEXTURE_2D, fAlbedo);
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, dumpTo.ptr);
-
-    // We need to flip it because OpenGL renders stuff with a different coordinate system
-    ubyte[] tmpLine = new ubyte[inViewportWidth * 4];
-    size_t ri = 0;
-    foreach_reverse(i; inViewportHeight/2..inViewportHeight) {
-        size_t lineSize = inViewportWidth*4;
-        size_t oldLineStart = (lineSize*ri);
-        size_t newLineStart = (lineSize*i);
-        import core.stdc.string : memcpy;
-
-        memcpy(tmpLine.ptr, dumpTo.ptr+oldLineStart, lineSize);
-        memcpy(dumpTo.ptr+oldLineStart, dumpTo.ptr+newLineStart, lineSize);
-        memcpy(dumpTo.ptr+newLineStart, tmpLine.ptr, lineSize);
-        
-        ri++;
-    }
 }
 
 /**
