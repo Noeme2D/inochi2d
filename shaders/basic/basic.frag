@@ -12,10 +12,9 @@
     
     Authors: Leo Li, Ruiqi Niu
 */
-#version 330
-in vec2 texUVs;
-
-layout(location = 0) out vec4 outAlbedo;
+#version 100
+precision highp float;
+varying vec2 texUVs;
 
 uniform sampler2D albedo;
 
@@ -25,11 +24,11 @@ uniform vec3 screenColor;
 
 void main() {
     // Sample texture
-    vec4 texColor = texture(albedo, texUVs);
+    vec4 texColor = texture2D(albedo, texUVs);
 
     // Screen color math
     vec3 screenOut = vec3(1.0) - ((vec3(1.0)-(texColor.xyz)) * (vec3(1.0)-(screenColor*texColor.a)));
     
     // Multiply color math + opacity application.
-    outAlbedo = vec4(screenOut.xyz, texColor.a) * vec4(multColor.xyz, 1) * opacity;
+    gl_FragData[0] = vec4(screenOut.xyz, texColor.a) * vec4(multColor.xyz, 1) * opacity;
 }
