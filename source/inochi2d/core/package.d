@@ -77,9 +77,9 @@ private {
     GLuint sceneVAO;
     GLuint sceneVBO;
 
-    GLuint fBuffer;
-    GLuint fAlbedo;
-    GLuint fStencil;
+    GLuint fBuffer; // a framebuffer for final rendering
+    GLuint fAlbedo; // a texture for color
+    GLuint fStencil; // a renderbuffer with stencil attachment for stenciling
 
     GLuint cfBuffer;
     GLuint cfAlbedo;
@@ -178,20 +178,23 @@ package(inochi2d) {
             
             // Generate the color and stencil-depth textures needed
             // Note: we're not using the depth buffer but OpenGL 3.4 does not support stencil-only buffers
+            // ES 2.0 port: ES 2.0 does not support stencil as textures
+            // ES 2.0 port: guess what, we don't even have native stencil-with-depth support
             glGenTextures(1, &fAlbedo);
-            glGenTextures(1, &fStencil);
+            glGenRenderbuffers(1, &fStencil);
 
             glGenTextures(1, &cfAlbedo);
-            glGenTextures(1, &cfStencil);
+            glGenRenderbuffers(1, &cfStencil);
 
             // Attach textures to framebuffer
+            // ES 2.0 port: attach renderbuffer with stencil buffer attached to framebuffer
             glBindFramebuffer(GL_FRAMEBUFFER, fBuffer);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fAlbedo, 0);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, fStencil, 0);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fStencil);
 
             glBindFramebuffer(GL_FRAMEBUFFER, cfBuffer);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cfAlbedo, 0);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, cfStencil, 0);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, cfStencil);
 
             // go back to default fb
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -346,12 +349,12 @@ void inSetViewport(int width, int height) nothrow {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         
-        glBindTexture(GL_TEXTURE_2D, fStencil);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, null);
+        glBindRenderbuffer(GL_RENDERBUFFER, fStencil);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, width, height);
 
         glBindFramebuffer(GL_FRAMEBUFFER, fBuffer);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fAlbedo, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, fStencil, 0);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fStencil);
         
 
         // Composite framebuffer
@@ -360,12 +363,12 @@ void inSetViewport(int width, int height) nothrow {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         
-        glBindTexture(GL_TEXTURE_2D, cfStencil);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, null);
+        glBindRenderbuffer(GL_RENDERBUFFER, fStencil);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, width, height);
 
         glBindFramebuffer(GL_FRAMEBUFFER, cfBuffer);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cfAlbedo, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, cfStencil, 0);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, cfStencil);
         
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
