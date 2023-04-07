@@ -203,9 +203,6 @@ vec3 inSceneAmbientLight = vec3(1, 1, 1);
 */
 void inBeginScene() {
     glEnable(GL_BLEND);
-    glEnablei(GL_BLEND, 0);
-    glEnablei(GL_BLEND, 1);
-    glEnablei(GL_BLEND, 2);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
 
@@ -262,9 +259,6 @@ void inEndComposite() {
 void inEndScene() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    glDisablei(GL_BLEND, 0);
-    glDisablei(GL_BLEND, 1);
-    glDisablei(GL_BLEND, 2);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glDisable(GL_BLEND);
