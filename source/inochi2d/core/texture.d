@@ -369,26 +369,6 @@ public:
     }
 
     /**
-        Saves the texture to file
-    */
-    void save(string file) {
-        write_image(file, width, height, getTextureData(true), channels_);
-    }
-
-    /**
-        Gets the texture data for the texture
-    */
-    ubyte[] getTextureData(bool unmultiply=false) {
-        ubyte[] buf = new ubyte[width*height*channels_];
-        bind();
-        glGetTexImage(GL_TEXTURE_2D, 0, outColorMode_, GL_UNSIGNED_BYTE, buf.ptr);
-        if (unmultiply && channels == 4) {
-            inTexUnPremuliply(buf);
-        }
-        return buf;
-    }
-
-    /**
         Gets this texture's texture id
     */
     GLuint getTextureId() {
