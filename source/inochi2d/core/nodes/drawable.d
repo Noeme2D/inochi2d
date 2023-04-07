@@ -6,6 +6,14 @@
     
     Authors: Luna Nielsen
 */
+
+/*
+    Inochi2D OpenGL ES 2.0 Port
+    Copyright © 2023, Noeme2D Workgroup
+    Distributed under the 2-Clause BSD License, see LICENSE file.
+    
+    Authors: Leo Li, Ruiqi Niu
+*/
 module inochi2d.core.nodes.drawable;
 public import inochi2d.core.nodes.defstack;
 import inochi2d.integration;
@@ -13,24 +21,11 @@ import inochi2d.fmt.serialize;
 import inochi2d.math;
 import bindbc.opengl;
 import std.exception;
-import inochi2d.core.dbg;
 import inochi2d.core;
-
-private GLuint drawableVAO;
 
 package(inochi2d) {
     void inInitDrawable() {
-        version(InDoesRender) glGenVertexArrays(1, &drawableVAO);
-    }
 
-
-    /**
-        Binds the internal vertex array for rendering
-    */
-    void incDrawableBindVAO() {
-
-        // Bind our vertex array
-        glBindVertexArray(drawableVAO);
     }
 
     bool doGenerateBounds = false;
@@ -292,84 +287,6 @@ public:
             if (vertOriented.y < bounds.y) bounds.y = vertOriented.y;
             if (vertOriented.x > bounds.z) bounds.z = vertOriented.x;
             if (vertOriented.y > bounds.w) bounds.w = vertOriented.y;
-        }
-    }
-
-    /**
-        Draws bounds
-    */
-    override
-    void drawBounds() {
-        if (!doGenerateBounds) return;
-        if (vertices.length == 0) return;
-        
-        float width = bounds.z-bounds.x;
-        float height = bounds.w-bounds.y;
-        inDbgSetBuffer([
-            vec3(bounds.x, bounds.y, 0),
-            vec3(bounds.x + width, bounds.y, 0),
-            
-            vec3(bounds.x + width, bounds.y, 0),
-            vec3(bounds.x + width, bounds.y+height, 0),
-            
-            vec3(bounds.x + width, bounds.y+height, 0),
-            vec3(bounds.x, bounds.y+height, 0),
-            
-            vec3(bounds.x, bounds.y+height, 0),
-            vec3(bounds.x, bounds.y, 0),
-        ]);
-        inDbgLineWidth(3);
-        inDbgDrawLines(vec4(.5, .5, .5, 1));
-        inDbgLineWidth(1);
-    }
-    
-    version (InDoesRender) {
-        /**
-            Draws line of mesh
-        */
-        void drawMeshLines() {
-            if (vertices.length == 0) return;
-
-            auto trans = transform.matrix();
-            ushort[] indices = data.indices;
-
-            vec3[] points = new vec3[indices.length*2];
-            foreach(i; 0..indices.length/3) {
-                size_t ix = i*3;
-                size_t iy = ix*2;
-                auto indice = indices[ix];
-
-                points[iy+0] = vec3(vertices[indice]-data.origin+deformation[indice], 0);
-                points[iy+1] = vec3(vertices[indices[ix+1]]-data.origin+deformation[indices[ix+1]], 0);
-
-                points[iy+2] = vec3(vertices[indices[ix+1]]-data.origin+deformation[indices[ix+1]], 0);
-                points[iy+3] = vec3(vertices[indices[ix+2]]-data.origin+deformation[indices[ix+2]], 0);
-
-                points[iy+4] = vec3(vertices[indices[ix+2]]-data.origin+deformation[indices[ix+2]], 0);
-                points[iy+5] = vec3(vertices[indice]-data.origin+deformation[indice], 0);
-            }
-
-            inDbgSetBuffer(points);
-            inDbgDrawLines(vec4(.5, .5, .5, 1), trans);
-        }
-
-        /**
-            Draws the points of the mesh
-        */
-        void drawMeshPoints() {
-            if (vertices.length == 0) return;
-
-            auto trans = transform.matrix();
-            vec3[] points = new vec3[vertices.length];
-            foreach(i, point; vertices) {
-                points[i] = vec3(point-data.origin+deformation[i], 0);
-            }
-
-            inDbgSetBuffer(points);
-            inDbgPointsSize(8);
-            inDbgDrawPoints(vec4(0, 0, 0, 1), trans);
-            inDbgPointsSize(4);
-            inDbgDrawPoints(vec4(1, 1, 1, 1), trans);
         }
     }
 

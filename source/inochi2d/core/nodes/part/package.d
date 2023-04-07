@@ -6,6 +6,14 @@
     
     Authors: Luna Nielsen
 */
+
+/*
+    Inochi2D OpenGL ES 2.0 Port
+    Copyright © 2023, Noeme2D Workgroup
+    Distributed under the 2-Clause BSD License, see LICENSE file.
+    
+    Authors: Leo Li, Ruiqi Niu
+*/
 module inochi2d.core.nodes.part;
 import inochi2d.integration;
 import inochi2d.fmt;
@@ -52,23 +60,16 @@ package(inochi2d) {
             partShader = new Shader(import("basic/basic.vert"), import("basic/basic.frag"));
             partMaskShader = new Shader(import("basic/basic.vert"), import("basic/basic-mask.frag"));
 
-            incDrawableBindVAO();
-
             partShader.use();
             partShader.setUniform(partShader.getUniformLocation("albedo"), 0);
-            partShader.setUniform(partShader.getUniformLocation("emissive"), 1);
-            partShader.setUniform(partShader.getUniformLocation("bumpmap"), 2);
             mvp = partShader.getUniformLocation("mvp");
             offset = partShader.getUniformLocation("offset");
             gopacity = partShader.getUniformLocation("opacity");
             gMultColor = partShader.getUniformLocation("multColor");
             gScreenColor = partShader.getUniformLocation("screenColor");
-            gEmissionStrength = partShader.getUniformLocation("emissionStrength");
 
             partMaskShader.use();
             partMaskShader.setUniform(partMaskShader.getUniformLocation("albedo"), 0);
-            partMaskShader.setUniform(partMaskShader.getUniformLocation("emissive"), 1);
-            partMaskShader.setUniform(partMaskShader.getUniformLocation("bumpmap"), 2);
             mmvp = partMaskShader.getUniformLocation("mvp");
             mthreshold = partMaskShader.getUniformLocation("threshold");
             
@@ -162,8 +163,6 @@ private:
         // In some cases this may happen
         if (textures.length == 0) return;
 
-        // Bind the vertex array
-        incDrawableBindVAO();
         static if (isMask) {
             partMaskShader.use();
             partMaskShader.setUniform(offset, data.origin);
@@ -175,11 +174,8 @@ private:
             partShader.setUniform(offset, data.origin);
             partShader.setUniform(mvp, inGetCamera().matrix * transform.matrix());
             partShader.setUniform(gopacity, clamp(offsetOpacity * opacity, 0, 1));
-            partShader.setUniform(gEmissionStrength, emissionStrength*offsetEmissionStrength);
 
             partShader.setUniform(partShader.getUniformLocation("albedo"), 0);
-            partShader.setUniform(partShader.getUniformLocation("emissive"), 1);
-            partShader.setUniform(partShader.getUniformLocation("bumpmap"), 2);
             
             vec3 clampedColor = tint;
             if (!offsetTint.x.isNaN) clampedColor.x = clamp(tint.x*offsetTint.x, 0, 1);
@@ -712,9 +708,6 @@ void inDrawTextureAtPart(Texture texture, Part part) {
     const float texWidthP = texture.width()/2;
     const float texHeightP = texture.height()/2;
 
-    // Bind the vertex array
-    incDrawableBindVAO();
-
     partShader.use();
     partShader.setUniform(mvp, 
         inGetCamera().matrix * 
@@ -769,9 +762,6 @@ void inDrawTextureAtPosition(Texture texture, vec2 position, float opacity = 1, 
     const float texWidthP = texture.width()/2;
     const float texHeightP = texture.height()/2;
 
-    // Bind the vertex array
-    incDrawableBindVAO();
-
     partShader.use();
     partShader.setUniform(mvp, 
         inGetCamera().matrix * 
@@ -824,9 +814,6 @@ void inDrawTextureAtPosition(Texture texture, vec2 position, float opacity = 1, 
     Draws a texture at the transform of the specified part
 */
 void inDrawTextureAtRect(Texture texture, rect area, rect uvs = rect(0, 0, 1, 1), float opacity = 1, vec3 color = vec3(1, 1, 1), vec3 screenColor = vec3(0, 0, 0), Shader s = null, Camera cam = null) {
-
-    // Bind the vertex array
-    incDrawableBindVAO();
 
     if (!s) s = partShader;
     if (!cam) cam = inGetCamera();

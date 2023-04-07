@@ -6,6 +6,14 @@
     
     Authors: Luna Nielsen
 */
+
+/*
+    Inochi2D OpenGL ES 2.0 Port
+    Copyright © 2023, Noeme2D Workgroup
+    Distributed under the 2-Clause BSD License, see LICENSE file.
+    
+    Authors: Leo Li, Ruiqi Niu
+*/
 module inochi2d.core.nodes.composite;
 import inochi2d.core.nodes.common;
 import inochi2d.core.nodes;
@@ -17,7 +25,6 @@ import std.exception;
 import std.algorithm.sorting;
 
 private {
-    GLuint cVAO;
     GLuint cBuffer;
     Shader cShader;
     Shader cShaderMask;
@@ -45,8 +52,6 @@ package(inochi2d) {
             gMultColor = cShader.getUniformLocation("multColor");
             gScreenColor = cShader.getUniformLocation("screenColor");
             cShader.setUniform(cShader.getUniformLocation("albedo"), 0);
-            cShader.setUniform(cShader.getUniformLocation("emissive"), 1);
-            cShader.setUniform(cShader.getUniformLocation("bumpmap"), 2);
 
             cShaderMask = new Shader(
                 import("basic/composite.vert"),
@@ -56,7 +61,6 @@ package(inochi2d) {
             mthreshold = cShader.getUniformLocation("threshold");
             mopacity = cShader.getUniformLocation("opacity");
 
-            glGenVertexArrays(1, &cVAO);
             glGenBuffers(1, &cBuffer);
 
             // Clip space vertex data since we'll just be superimposing
@@ -79,7 +83,6 @@ package(inochi2d) {
                 1f, 1f,
             ];
 
-            glBindVertexArray(cVAO);
             glBindBuffer(GL_ARRAY_BUFFER, cBuffer);
             glBufferData(GL_ARRAY_BUFFER, float.sizeof*vertexData.length, vertexData.ptr, GL_STATIC_DRAW);
         }
@@ -110,8 +113,6 @@ private:
             }
 
         inEndComposite();
-
-        glBindVertexArray(cVAO);
 
         cShader.use();
         cShader.setUniform(gopacity, clamp(offsetOpacity * opacity, 0, 1));
@@ -190,8 +191,6 @@ protected:
             glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         inEndComposite();
 
-
-        glBindVertexArray(cVAO);
         cShaderMask.use();
         cShaderMask.setUniform(mopacity, opacity);
         cShaderMask.setUniform(mthreshold, threshold);

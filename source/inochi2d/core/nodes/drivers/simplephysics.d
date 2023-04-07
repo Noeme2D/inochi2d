@@ -6,12 +6,19 @@
 
     Authors: Asahi Lina
 */
+
+/*
+    Inochi2D OpenGL ES 2.0 Port
+    Copyright © 2023, Noeme2D Workgroup
+    Distributed under the 2-Clause BSD License, see LICENSE file.
+    
+    Authors: Leo Li, Ruiqi Niu
+*/
 module inochi2d.core.nodes.drivers.simplephysics;
 import inochi2d.core.nodes.drivers;
 import inochi2d.core.nodes.common;
 import inochi2d.core.nodes;
 import inochi2d.fmt;
-import inochi2d.core.dbg;
 import inochi2d.core;
 import inochi2d.math;
 import inochi2d.phys;
@@ -84,18 +91,6 @@ public:
         bob = driver.anchor + dBob * driver.length;
 
         driver.output = bob;
-    }
-
-    override
-    void drawDebug(mat4 trans = mat4.identity) {
-        vec3[] points = [
-            vec3(driver.anchor.x, driver.anchor.y, 0),
-            vec3(bob.x, bob.y, 0),
-        ];
-
-        inDbgSetBuffer(points);
-        inDbgLineWidth(3);
-        inDbgDrawLines(vec4(1, 0, 1, 1), trans);
     }
 
     override
@@ -172,18 +167,6 @@ public:
         super.tick(h);
 
         driver.output = bob;
-    }
-
-    override
-    void drawDebug(mat4 trans = mat4.identity) {
-        vec3[] points = [
-            vec3(driver.anchor.x, driver.anchor.y, 0),
-            vec3(bob.x, bob.y, 0),
-        ];
-
-        inDbgSetBuffer(points);
-        inDbgLineWidth(3);
-        inDbgDrawLines(vec4(1, 0, 1, 1), trans);
     }
 
     override
@@ -414,11 +397,6 @@ public:
         param_ = puppet.findParameter(paramRef);
         super.finalize();
         reset();
-    }
-
-    override
-    void drawDebug() {
-        system.drawDebug();
     }
 
     Parameter param() {
