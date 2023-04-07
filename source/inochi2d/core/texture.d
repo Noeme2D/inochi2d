@@ -4,6 +4,14 @@
     
     Authors: Luna Nielsen
 */
+
+/*
+    Inochi2D OpenGL ES 2.0 Port
+    Copyright © 2023, Noeme2D Workgroup
+    Distributed under the 2-Clause BSD License, see LICENSE file.
+    
+    Authors: Leo Li, Ruiqi Niu
+*/
 module inochi2d.core.texture;
 import inochi2d.math;
 import std.exception;
@@ -26,26 +34,6 @@ enum Filtering {
         Due to texture sampling being float based this is imprecise.
     */
     Point
-}
-
-/**
-    Texture wrapping modes
-*/
-enum Wrapping {
-    /**
-        Clamp texture sampling to be within the texture
-    */
-    Clamp = GL_CLAMP_TO_BORDER,
-
-    /**
-        Wrap the texture in every direction idefinitely
-    */
-    Repeat = GL_REPEAT,
-
-    /**
-        Wrap the texture mirrored in every direction indefinitely
-    */
-    Mirror = GL_MIRRORED_REPEAT
 }
 
 /**
@@ -258,10 +246,8 @@ public:
         glGenTextures(1, &id);
         this.setData(data);
 
-        // Set default filtering and wrapping
+        // Set default filtering
         this.setFiltering(Filtering.Linear);
-        this.setWrapping(Wrapping.Clamp);
-        this.setAnisotropy(incGetMaxAnisotropy()/2.0f);
     }
 
     ~this() {
@@ -326,25 +312,6 @@ public:
             GL_TEXTURE_MAG_FILTER, 
             filtering == Filtering.Linear ? GL_LINEAR : GL_NEAREST
         );
-    }
-
-    void setAnisotropy(float value) {
-        this.bind();
-        glTexParameterf(
-            GL_TEXTURE_2D,
-            GL_TEXTURE_MAX_ANISOTROPY,
-            clamp(value, 1, incGetMaxAnisotropy())
-        );
-    }
-
-    /**
-        Set the wrapping mode used for the texture
-    */
-    void setWrapping(Wrapping wrapping) {
-        this.bind();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapping);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapping);
-        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, [0f, 0f, 0f, 0f].ptr);
     }
 
     /**
@@ -440,15 +407,6 @@ public:
 private {
     Texture[] textureBindings;
     bool started = false;
-}
-
-/**
-    Gets the maximum level of anisotropy
-*/
-float incGetMaxAnisotropy() {
-    float max;
-    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &max);
-    return max;
 }
 
 /**

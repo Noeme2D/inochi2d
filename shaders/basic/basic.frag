@@ -23,6 +23,11 @@ uniform vec3 multColor;
 uniform vec3 screenColor;
 
 void main() {
+    // if texture coords out of texture, no color
+    if (texUVs[0] <= 0.0 || texUVs[0] >= 1.0 || texUVs[1] <= 0.0 || texUVs[1] >= 1.0) {
+        discard;
+    }
+
     // Sample texture
     vec4 texColor = texture2D(albedo, texUVs);
 
