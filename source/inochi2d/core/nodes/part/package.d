@@ -20,7 +20,7 @@ import inochi2d.fmt;
 import inochi2d.core.nodes.drawable;
 import inochi2d.core;
 import inochi2d.math;
-import bindbc.opengl;
+import derelict.gles.gles2;
 import std.exception;
 import std.algorithm.mutation : copy;
 public import inochi2d.core.nodes.common;

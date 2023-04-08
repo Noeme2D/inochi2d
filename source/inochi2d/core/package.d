@@ -26,7 +26,7 @@ public import inochi2d.core.automation;
 public import inochi2d.core.animation;
 public import inochi2d.integration;
 
-import bindbc.opengl;
+import derelict.gles.gles2;
 import inochi2d.math;
 import std.stdio;
 
@@ -210,7 +210,7 @@ void inBeginScene() {
     glViewport(0, 0, inViewportWidth, inViewportHeight);
 
     // Bind our framebuffer
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, fBuffer);
 
     glClearColor(inClearColor.r, inClearColor.g, inClearColor.b, inClearColor.a);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -231,7 +231,7 @@ void inBeginComposite() {
     if (isCompositing) return;
     isCompositing = true;
 
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, cfBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, cfBuffer);
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 

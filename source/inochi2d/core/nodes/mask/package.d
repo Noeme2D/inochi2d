@@ -18,7 +18,7 @@ module inochi2d.core.nodes.mask;
 import inochi2d.core.nodes.drawable;
 import inochi2d.core;
 import inochi2d.math;
-import bindbc.opengl;
+import derelict.gles.gles2;
 import std.exception;
 import std.algorithm.mutation : copy;
 

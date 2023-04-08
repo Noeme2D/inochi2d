@@ -16,7 +16,7 @@ module inochi2d.core.texture;
 import inochi2d.math;
 import std.exception;
 import std.format;
-import bindbc.opengl;
+import derelict.gles.gles2;
 import imagefmt;
 import std.stdio;
 
@@ -235,12 +235,9 @@ public:
 
         this.inColorMode_ = GL_RGBA;
         this.outColorMode_ = GL_RGBA;
-        if (inChannels == 1) this.inColorMode_ = GL_RED;
-        else if (inChannels == 2) this.inColorMode_ = GL_RG;
-        else if (inChannels == 3) this.inColorMode_ = GL_RGB;
-        if (outChannels == 1) this.outColorMode_ = GL_RED;
-        else if (outChannels == 2) this.outColorMode_ = GL_RG;
-        else if (outChannels == 3) this.outColorMode_ = GL_RGB;
+
+        // GL ES 2.0 Port: stick to GL_RGBA for simplicity
+        assert(inChannels == 4);
 
         // Generate OpenGL texture
         glGenTextures(1, &id);
@@ -332,27 +329,6 @@ public:
     void genMipmap() {
         this.bind();
         glGenerateMipmap(GL_TEXTURE_2D);
-    }
-
-    /**
-        Sets a region of a texture to new data
-    */
-    void setDataRegion(ubyte[] data, int x, int y, int width, int height, int channels = 4) {
-        this.bind();
-
-        // Make sure we don't try to change the texture in an out of bounds area.
-        enforce( x >= 0 && x+width <= this.width_, "x offset is out of bounds (xoffset=%s, xbound=%s)".format(x+width, this.width_));
-        enforce( y >= 0 && y+height <= this.height_, "y offset is out of bounds (yoffset=%s, ybound=%s)".format(y+height, this.height_));
-
-        GLuint inChannelMode = GL_RGBA;
-        if (channels == 1) inChannelMode = GL_RED;
-        else if (channels == 2) inChannelMode = GL_RG;
-        else if (channels == 3) inChannelMode = GL_RGB;
-
-        // Update the texture
-        glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, inChannelMode, GL_UNSIGNED_BYTE, data.ptr);
-
-        this.genMipmap();
     }
 
     /**

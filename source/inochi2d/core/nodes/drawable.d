@@ -19,7 +19,7 @@ public import inochi2d.core.nodes.defstack;
 import inochi2d.integration;
 import inochi2d.fmt.serialize;
 import inochi2d.math;
-import bindbc.opengl;
+import derelict.gles.gles2;
 import std.exception;
 import inochi2d.core;
 
