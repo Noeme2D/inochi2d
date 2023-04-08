@@ -4,7 +4,7 @@
 
 [日本語](https://github.com/Inochi2D/inochi2d/blob/main/README.ja.md)
 
-# Inochi2D
+# Inochi2D (OpenGL ES 2.0 Port)
 [![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dclipsey%26type%3Dpatrons&style=for-the-badge)](https://patreon.com/clipsey)
 [![Discord](https://img.shields.io/discord/855173611409506334?label=Community&logo=discord&logoColor=FFFFFF&style=for-the-badge)](https://discord.com/invite/abnxwN6r9v)
 
@@ -26,16 +26,6 @@ https://user-images.githubusercontent.com/7032834/166389697-02eeeedb-6a44-4570-9
 # Rigging
 If you're a model rigger you may want to check out [Inochi Creator](https://github.com/Inochi2D/inochi-creator), the official Inochi2D rigging app in development.  
 This repository is purely for the standard and is not useful if you're an end user.
-
-&nbsp;
-
-# Supported platforms
-The reference library requires at least OpenGL 4.2 or above, as well support for the SPIR-V ARB extension for per-part shaders.  
-*Inochi2D will disable custom shaders if SPIR-V is not found.* 
-
-Implementors are free to implement Inochi2D over other graphics APIs and abstractions and should work on most modern graphics APIs (newer than OpenGL 2)
-
-An official Unity implementation will be provided once 1.0 is complete.
 
 &nbsp;
 
@@ -71,71 +61,91 @@ Bootstrapping Inochi2D depends on the backing window managment library you are u
 
 Inochi2D can be boostrapped in GLFW (bindbc) with the following code
 ```d
-// Loads GLFW
-loadGLFW();
-glfwInit();
+import std.stdio;
+import std.getopt;
+import std.json;
+import std.string;
+import inochi2d;
+import bindbc.glfw;
+import derelict.gles.gles2;
 
-// Create Window and initialize OpenGL 4.2 with compat profile
-glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
-glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-window = glfwCreateWindow(1024, 1024, "Inochi2D App".toStringz, null, null);
+int main() {
+    loadGLFW();
+    glfwInit();
 
-// Make OpenGL current and load its functions.
-glfwMakeContextCurrent(window);
-loadOpenGL();
+    glfwWindowHint(GLFW_OPENGL_ES_API, GLFW_OPENGL_ANY_PROFILE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    GLFWwindow* window = glfwCreateWindow(480, 800, "Inochi2D App".toStringz, null, null);
 
-// A timing function that returns the current applications runtime in seconds and milliseconds is needed
-inInit(cast(double function())glfwGetTime);
+    glfwMakeContextCurrent(window);
+    DerelictGLES2.load();
 
-// Get the viewport size, which is the size of the scene
-int sceneWidth, sceneHeight;
+    // A timing function that returns the current applications runtime in seconds and milliseconds is needed
+    inInit(cast(double function())glfwGetTime);
 
-// It is highly recommended to change the viewport with
-// inSetViewport to match the viewport you want, otherwise it'll be 640x480
-inSetViewport(1024, 1024);
-inGetViewport(sceneWidth, sceneHeight);
+    // Get the viewport size, which is the size of the scene
+    int sceneWidth, sceneHeight;
 
-// Also many vtuber textures are pretty big so let's zoom out a bit.
-inGetCamera().scale = vec2(0.5);
+    // It is highly recommended to change the viewport with
+    // inSetViewport to match the viewport you want, otherwise it'll be 640x480
+    inSetViewport(480, 800);
+    inGetViewport(sceneWidth, sceneHeight);
 
-// NOTE: If you want to implement camera switching (for eg camera presets) use
-// inSetCamera
+    // Also many vtuber textures are pretty big so let's zoom out a bit.
+    inGetCamera().scale = vec2(0.2);
+    inGetCamera().position = vec2(0, 1000);
 
-// NOTE: Loading API WIP, subject to change
-Puppet myPuppet = inLoadPuppet("myPuppet.inp");
+    // NOTE: If you want to implement camera switching (for eg camera presets) use
+    // inSetCamera
 
-while(!glfwWindowShouldClose(window)) {
-    // NOTE: Inochi2D does not itself clear the main framebuffer
-    // you have to do that your self.
-    glClear(GL_COLOR_BUFFER_BIT);
+    // NOTE: Loading API WIP, subject to change
+    // You can get example models at https://github.com/Inochi2D/example-models
+    Puppet myPuppet = inLoadPuppet("Aka.inx");
+    
+    // Example of how to retreive and set puppet parameters at runtime
+    int[string] name_to_index;
+    int index = 0;
+    foreach (ref p; myPuppet.parameters) {
+        name_to_index[p.name] = index++;
+        writeln(p.name);
+        writeln(p.isVec2);
+    }
+    myPuppet.parameters[name_to_index["Head:: Roll"]].value = vec2(-1, 0);
 
-    // Run inUpdate first
-    // This updates various submodules and time managment for animation
-    inUpdate();
+    while(!glfwWindowShouldClose(window)) {
+        // NOTE: Inochi2D does not itself clear the main framebuffer
+        // you have to do that your self.
+        glClear(GL_COLOR_BUFFER_BIT);
+        
+        // Run inUpdate first
+        // This updates various submodules and time managment for animation
+        inUpdate();
 
-    // Imagine there's a lot of rendering code here
-    // Maybe even some game logic or something
+        // Imagine there's a lot of rendering code here
+        // Maybe even some game logic or something
 
-    // Begins drawing in to the Inochi2D scene
-    // NOTE: You *need* to do this otherwise rendering may break
-    inBeginScene();
+        // Begins drawing in to the Inochi2D scene
+        // NOTE: You *need* to do this otherwise rendering may break
+        inBeginScene();
+        
+            // Draw and update myPuppet.
+            // Convention for using Inochi2D in D is to put everything
+            // in a scene block one indent in.
+            myPuppet.update();
+            myPuppet.draw();
 
-        // Draw and update myPuppet.
-        // Convention for using Inochi2D in D is to put everything
-        // in a scene block one indent in.
-        myPuppet.update();
-        myPuppet.draw();
-
-    // Ends drawing in to the Inochi2D scene.
-    inEndScene();
-
-    // Draw the scene, background is transparent
-    inSceneDraw(vec4i(0, 0, sceneWidth, sceneHeight));
-
-    // Do the buffer swapping and event polling last
-    glfwSwapBuffers(window);
-    glfwPollEvents();
+        // Ends drawing in to the Inochi2D scene.
+        inEndScene();
+        
+        // Draw the scene, background is transparent
+        inDrawScene(vec4(0, 0, sceneWidth, sceneHeight));
+        
+        // Do the buffer swapping and event polling last
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+    return 0;
 }
 ```
 
