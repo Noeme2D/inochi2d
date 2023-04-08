@@ -4,6 +4,14 @@
 
     Author Asahi Lina
 */
+
+/*
+    Inochi2D OpenGL ES 2.0 Port
+    Copyright © 2023, Noeme2D Workgroup
+    Distributed under the 2-Clause BSD License, see LICENSE file.
+    
+    Authors: Leo Li, Ruiqi Niu
+*/
 module inochi2d.phys.system;
 import inochi2d;
 import std.math : isFinite;
@@ -131,10 +139,5 @@ public:
         Updates the anchor for the physics system
     */
     abstract void updateAnchor();
-
-    /**
-        Draw debug
-    */
-    abstract void drawDebug(mat4 trans = mat4.identity);
 }
 

@@ -4,9 +4,17 @@
     
     Authors: Luna Nielsen
 */
-#version 330
-out vec4 outColor;
+
+/*
+    Inochi2D OpenGL ES 2.0 Port
+    Copyright © 2023, Noeme2D Workgroup
+    Distributed under the 2-Clause BSD License, see LICENSE file.
+
+    Authors: Leo Li, Ruiqi Niu
+*/
+#version 100
+precision highp float;
 
 void main() {
-    outColor = vec4(0, 0, 0, 1);
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
 }

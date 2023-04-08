@@ -7,7 +7,7 @@
 module inochi2d.core.shader;
 import inochi2d.math;
 import std.string;
-import bindbc.opengl;
+import derelict.gles.gles2;
 
 /**
     A shader

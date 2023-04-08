@@ -4,12 +4,20 @@
     
     Authors: Luna Nielsen
 */
-#version 330
+
+/*
+    Inochi2D OpenGL ES 2.0 Port
+    Copyright © 2023, Noeme2D Workgroup
+    Distributed under the 2-Clause BSD License, see LICENSE file.
+
+    Authors: Leo Li, Ruiqi Niu
+*/
+#version 100
 uniform mat4 mvp;
 uniform vec2 offset;
-layout(location = 0) in vec2 verts;
+attribute vec2 verts;
 
-out vec2 texUVs;
+varying vec2 texUVs;
 
 void main() {
     gl_Position = mvp * vec4(verts.x-offset.x, verts.y-offset.y, 0, 1);

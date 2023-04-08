@@ -4,11 +4,19 @@
     
     Authors: Luna Nielsen
 */
+
+/*
+    Inochi2D OpenGL ES 2.0 Port
+    Copyright © 2023, Noeme2D Workgroup
+    Distributed under the 2-Clause BSD License, see LICENSE file.
+    
+    Authors: Leo Li, Ruiqi Niu
+*/
 module inochi2d.core.texture;
 import inochi2d.math;
 import std.exception;
 import std.format;
-import bindbc.opengl;
+import derelict.gles.gles2;
 import imagefmt;
 import std.stdio;
 
@@ -26,26 +34,6 @@ enum Filtering {
         Due to texture sampling being float based this is imprecise.
     */
     Point
-}
-
-/**
-    Texture wrapping modes
-*/
-enum Wrapping {
-    /**
-        Clamp texture sampling to be within the texture
-    */
-    Clamp = GL_CLAMP_TO_BORDER,
-
-    /**
-        Wrap the texture in every direction idefinitely
-    */
-    Repeat = GL_REPEAT,
-
-    /**
-        Wrap the texture mirrored in every direction indefinitely
-    */
-    Mirror = GL_MIRRORED_REPEAT
 }
 
 /**
@@ -247,21 +235,16 @@ public:
 
         this.inColorMode_ = GL_RGBA;
         this.outColorMode_ = GL_RGBA;
-        if (inChannels == 1) this.inColorMode_ = GL_RED;
-        else if (inChannels == 2) this.inColorMode_ = GL_RG;
-        else if (inChannels == 3) this.inColorMode_ = GL_RGB;
-        if (outChannels == 1) this.outColorMode_ = GL_RED;
-        else if (outChannels == 2) this.outColorMode_ = GL_RG;
-        else if (outChannels == 3) this.outColorMode_ = GL_RGB;
+
+        // GL ES 2.0 Port: stick to GL_RGBA for simplicity
+        assert(inChannels == 4);
 
         // Generate OpenGL texture
         glGenTextures(1, &id);
         this.setData(data);
 
-        // Set default filtering and wrapping
+        // Set default filtering
         this.setFiltering(Filtering.Linear);
-        this.setWrapping(Wrapping.Clamp);
-        this.setAnisotropy(incGetMaxAnisotropy()/2.0f);
     }
 
     ~this() {
@@ -328,25 +311,6 @@ public:
         );
     }
 
-    void setAnisotropy(float value) {
-        this.bind();
-        glTexParameterf(
-            GL_TEXTURE_2D,
-            GL_TEXTURE_MAX_ANISOTROPY,
-            clamp(value, 1, incGetMaxAnisotropy())
-        );
-    }
-
-    /**
-        Set the wrapping mode used for the texture
-    */
-    void setWrapping(Wrapping wrapping) {
-        this.bind();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapping);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapping);
-        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, [0f, 0f, 0f, 0f].ptr);
-    }
-
     /**
         Sets the data of the texture
     */
@@ -368,27 +332,6 @@ public:
     }
 
     /**
-        Sets a region of a texture to new data
-    */
-    void setDataRegion(ubyte[] data, int x, int y, int width, int height, int channels = 4) {
-        this.bind();
-
-        // Make sure we don't try to change the texture in an out of bounds area.
-        enforce( x >= 0 && x+width <= this.width_, "x offset is out of bounds (xoffset=%s, xbound=%s)".format(x+width, this.width_));
-        enforce( y >= 0 && y+height <= this.height_, "y offset is out of bounds (yoffset=%s, ybound=%s)".format(y+height, this.height_));
-
-        GLuint inChannelMode = GL_RGBA;
-        if (channels == 1) inChannelMode = GL_RED;
-        else if (channels == 2) inChannelMode = GL_RG;
-        else if (channels == 3) inChannelMode = GL_RGB;
-
-        // Update the texture
-        glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, inChannelMode, GL_UNSIGNED_BYTE, data.ptr);
-
-        this.genMipmap();
-    }
-
-    /**
         Bind this texture
         
         Notes
@@ -399,26 +342,6 @@ public:
         assert(unit <= 31u, "Outside maximum OpenGL texture unit value");
         glActiveTexture(GL_TEXTURE0+(unit <= 31u ? unit : 31u));
         glBindTexture(GL_TEXTURE_2D, id);
-    }
-
-    /**
-        Saves the texture to file
-    */
-    void save(string file) {
-        write_image(file, width, height, getTextureData(true), channels_);
-    }
-
-    /**
-        Gets the texture data for the texture
-    */
-    ubyte[] getTextureData(bool unmultiply=false) {
-        ubyte[] buf = new ubyte[width*height*channels_];
-        bind();
-        glGetTexImage(GL_TEXTURE_2D, 0, outColorMode_, GL_UNSIGNED_BYTE, buf.ptr);
-        if (unmultiply && channels == 4) {
-            inTexUnPremuliply(buf);
-        }
-        return buf;
     }
 
     /**
@@ -440,15 +363,6 @@ public:
 private {
     Texture[] textureBindings;
     bool started = false;
-}
-
-/**
-    Gets the maximum level of anisotropy
-*/
-float incGetMaxAnisotropy() {
-    float max;
-    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &max);
-    return max;
 }
 
 /**

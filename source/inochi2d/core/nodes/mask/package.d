@@ -6,11 +6,19 @@
     
     Authors: Luna Nielsen
 */
+
+/*
+    Inochi2D OpenGL ES 2.0 Port
+    Copyright © 2023, Noeme2D Workgroup
+    Distributed under the 2-Clause BSD License, see LICENSE file.
+    
+    Authors: Leo Li, Ruiqi Niu
+*/
 module inochi2d.core.nodes.mask;
 import inochi2d.core.nodes.drawable;
 import inochi2d.core;
 import inochi2d.math;
-import bindbc.opengl;
+import derelict.gles.gles2;
 import std.exception;
 import std.algorithm.mutation : copy;
 
@@ -48,9 +56,6 @@ private:
         RENDERING
     */
     void drawSelf() {
-
-        // Bind the vertex array
-        incDrawableBindVAO();
 
         maskShader.use();
         maskShader.setUniform(offset, data.origin);

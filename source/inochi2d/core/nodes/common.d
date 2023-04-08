@@ -7,7 +7,7 @@
     Authors: Luna Nielsen
 */
 module inochi2d.core.nodes.common;
-import bindbc.opengl;
+import derelict.gles.gles2;
 import inochi2d.fmt.serialize;
 
 /**
