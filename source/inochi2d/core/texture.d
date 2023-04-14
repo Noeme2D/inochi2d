@@ -233,11 +233,20 @@ public:
         this.height_ = height;
         this.channels_ = outChannels;
 
-        this.inColorMode_ = GL_RGBA;
-        this.outColorMode_ = GL_RGBA;
-
-        // GL ES 2.0 Port: stick to GL_RGBA for simplicity
-        assert(inChannels == 4);
+        if (inChannels == 4) {
+            this.inColorMode_ = GL_RGBA;
+        } else if (inChannels == 3) {
+            this.inColorMode_ = GL_RGB;
+        } else {
+            assert(0, "GL ES 2.0 Port: Does not support texture formats other than RGB/RGBA.");
+        }
+        if (outChannels == 4) {
+            this.outColorMode_ = GL_RGBA;
+        } else if (outChannels == 3) {
+            this.outColorMode_ = GL_RGB;
+        } else {
+            assert(0, "GL ES 2.0 Port: Does not support texture formats other than RGB/RGBA.");
+        }
 
         // Generate OpenGL texture
         glGenTextures(1, &id);
