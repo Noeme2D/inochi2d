@@ -351,7 +351,7 @@ void inSetViewport(int width, int height) nothrow {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         
-        glBindRenderbuffer(GL_RENDERBUFFER, fStencil);
+        glBindRenderbuffer(GL_RENDERBUFFER, cfStencil);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, width, height);
 
         glBindFramebuffer(GL_FRAMEBUFFER, cfBuffer);
