@@ -136,10 +136,6 @@ package(inochi2d) {
         Initializes the renderer
     */
     void initRenderer() {
-
-        // Set the viewport and by extension set the textures
-        inSetViewport(640, 480);
-        
         // Initialize dynamic meshes
         inInitNodes();
         inInitDrawable();
@@ -183,16 +179,25 @@ package(inochi2d) {
             // Attach textures to framebuffer
             // ES 2.0 port: attach renderbuffer with stencil buffer attached to framebuffer
             glBindFramebuffer(GL_FRAMEBUFFER, fBuffer);
+            glBindTexture(GL_TEXTURE_2D, fAlbedo);
+            glBindRenderbuffer(GL_RENDERBUFFER, fStencil);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fAlbedo, 0);
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fStencil);
 
             glBindFramebuffer(GL_FRAMEBUFFER, cfBuffer);
+            glBindTexture(GL_TEXTURE_2D, cfAlbedo);
+            glBindRenderbuffer(GL_RENDERBUFFER, cfStencil);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cfAlbedo, 0);
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, cfStencil);
 
             // go back to default fb
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindRenderbuffer(GL_RENDERBUFFER, 0);
         }
+
+        // Set the viewport and by extension set the textures
+        inSetViewport(640, 480);
     }
 }
 
@@ -338,7 +343,7 @@ void inSetViewport(int width, int height) nothrow {
         glBindFramebuffer(GL_FRAMEBUFFER, fBuffer);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fAlbedo, 0);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fStencil);
-        
+
 
         // Composite framebuffer
         glBindTexture(GL_TEXTURE_2D, cfAlbedo);

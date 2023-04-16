@@ -543,8 +543,8 @@ public:
     final void updateTextureState() {
 
         // Update filtering mode for texture slots
-        foreach(texutre; textureSlots) {
-            texutre.setFiltering(meta.preservePixels ? Filtering.Point : Filtering.Linear);
+        foreach(texture; textureSlots) {
+            texture.setFiltering(meta.preservePixels ? Filtering.Point : Filtering.Linear);
         }
     }
 

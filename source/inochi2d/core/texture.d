@@ -247,6 +247,7 @@ public:
         } else {
             assert(0, "GL ES 2.0 Port: Does not support texture formats other than RGB/RGBA.");
         }
+        assert(this.inColorMode_ == this.outColorMode_, "GL ES 2.0 Port: Does not support texture format conversion.");
 
         // Generate OpenGL texture
         glGenTextures(1, &id);
