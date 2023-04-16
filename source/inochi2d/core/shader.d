@@ -139,6 +139,8 @@ public:
     }
 
     void setUniform(GLint uniform, mat4 value) {
-        glUniformMatrix4fv(uniform, 1, GL_TRUE, value.ptr);
+        // GL ES 2.0 Port: transpose by GL is not supported
+        value.transpose();
+        glUniformMatrix4fv(uniform, 1, GL_FALSE, value.ptr);
     }
 }

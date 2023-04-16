@@ -50,7 +50,7 @@ protected:
         Set the derivative of a variable (solver input) by index
     */
     void setD(ulong index, float value) {
-        derivative[index] = value;
+        derivative[cast(uint)index] = value;
     }
 
     /**
@@ -58,7 +58,7 @@ protected:
     */
     void setD(ref float var, float value) {
         ulong index = variableMap[&var];
-        setD(variableMap[&var], value);
+        setD(index, value);
     }
 
     /**
