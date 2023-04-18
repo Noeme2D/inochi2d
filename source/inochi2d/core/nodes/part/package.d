@@ -57,8 +57,16 @@ package(inochi2d) {
         inRegisterNodeType!Part;
 
         version(InDoesRender) {
-            partShader = new Shader(import("basic/basic.vert"), import("basic/basic.frag"));
-            partMaskShader = new Shader(import("basic/basic.vert"), import("basic/basic-mask.frag"));
+            partShader = new Shader(
+                import("basic/basic.vert"),
+                import("basic/basic.frag"),
+                ["verts", "uvs", "deform"]
+            );
+            partMaskShader = new Shader(
+                import("basic/basic.vert"),
+                import("basic/basic-mask.frag"),
+                ["verts", "uvs", "deform"]
+            );
 
             partShader.use();
             partShader.setUniform(partShader.getUniformLocation("albedo"), 0);

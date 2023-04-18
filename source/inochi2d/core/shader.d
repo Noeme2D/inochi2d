@@ -42,6 +42,36 @@ private:
         verifyProgram();
     }
 
+    void compileShaders(string vertex, string fragment, string[] attrib_loc) {
+
+        // Compile vertex shader
+        vertShader = glCreateShader(GL_VERTEX_SHADER);
+        auto c_vert = vertex.toStringz;
+        glShaderSource(vertShader, 1, &c_vert, null);
+        glCompileShader(vertShader);
+        verifyShader(vertShader);
+
+        // Compile fragment shader
+        fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+        auto c_frag = fragment.toStringz;
+        glShaderSource(fragShader, 1, &c_frag, null);
+        glCompileShader(fragShader);
+        verifyShader(fragShader);
+
+        // Attach and link them
+        shaderProgram = glCreateProgram();
+        glAttachShader(shaderProgram, vertShader);
+        glAttachShader(shaderProgram, fragShader);
+
+        foreach (i, attr; attrib_loc) {
+            auto c_attr = toStringz(attr);
+            glBindAttribLocation(shaderProgram, cast(GLuint)i, c_attr);
+        }
+
+        glLinkProgram(shaderProgram);
+        verifyProgram();
+    }
+
     void verifyShader(GLuint shader) {
 
         int compileStatus;
@@ -101,6 +131,10 @@ public:
     */
     this(string vertex, string fragment) {
         compileShaders(vertex, fragment);
+    }
+
+    this(string vertex, string fragment, string[] attrib_loc) {
+        compileShaders(vertex, fragment, attrib_loc);
     }
 
     /**

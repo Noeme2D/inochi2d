@@ -158,7 +158,11 @@ package(inochi2d) {
         version (InDoesRender) {
             
             // Shader for scene
-            basicSceneShader = PostProcessingShader(new Shader(import("scene.vert"), import("scene.frag")));
+            basicSceneShader = PostProcessingShader(new Shader(
+                import("scene.vert"),
+                import("scene.frag"),
+                ["verts", "uvs"]
+            ));
 
             glGenBuffers(1, &sceneVBO);
 

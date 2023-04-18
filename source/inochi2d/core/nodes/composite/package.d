@@ -44,7 +44,8 @@ package(inochi2d) {
         version(InDoesRender) {
             cShader = new Shader(
                 import("basic/composite.vert"),
-                import("basic/composite.frag")
+                import("basic/composite.frag"),
+                ["verts", "uvs"]
             );
 
             cShader.use();
@@ -55,7 +56,8 @@ package(inochi2d) {
 
             cShaderMask = new Shader(
                 import("basic/composite.vert"),
-                import("basic/composite-mask.frag")
+                import("basic/composite-mask.frag"),
+                ["verts", "uvs"]
             );
             cShaderMask.use();
             mthreshold = cShader.getUniformLocation("threshold");
