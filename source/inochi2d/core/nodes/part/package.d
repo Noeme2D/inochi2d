@@ -723,23 +723,23 @@ void inDrawTextureAtPart(Texture texture, Part part) {
     // Enable points array
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, sVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 4*vec2.sizeof, [
+    glBufferData(GL_ARRAY_BUFFER, 4*vec2.sizeof, (cast(float[])[
         -texWidthP, -texHeightP,
         texWidthP, -texHeightP,
         -texWidthP, texHeightP,
         texWidthP, texHeightP,
-    ].ptr, GL_STATIC_DRAW);
+    ]).ptr, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, null);
 
     // Enable UVs array
     glEnableVertexAttribArray(1); // uvs
     glBindBuffer(GL_ARRAY_BUFFER, sUVBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 4*vec2.sizeof, [
+    glBufferData(GL_ARRAY_BUFFER, 4*vec2.sizeof, (cast(float[])[
         0, 0,
         1, 0,
         0, 1,
         1, 1,
-    ].ptr, GL_STATIC_DRAW);
+    ]).ptr, GL_STATIC_DRAW);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, null);
 
     // Bind element array and draw our mesh
@@ -778,12 +778,12 @@ void inDrawTextureAtPosition(Texture texture, vec2 position, float opacity = 1, 
     // Enable points array
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, sVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 4*vec2.sizeof, [
+    glBufferData(GL_ARRAY_BUFFER, 4*vec2.sizeof, (cast(float[])[
         -texWidthP, -texHeightP,
         texWidthP, -texHeightP,
         -texWidthP, texHeightP,
         texWidthP, texHeightP,
-    ].ptr, GL_STATIC_DRAW);
+    ]).ptr, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, null);
 
     // Enable UVs array
@@ -832,12 +832,12 @@ void inDrawTextureAtRect(Texture texture, rect area, rect uvs = rect(0, 0, 1, 1)
     // Enable points array
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, sVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 4*vec2.sizeof, [
+    glBufferData(GL_ARRAY_BUFFER, 4*vec2.sizeof, (cast(float[])[
         area.left, area.top,
         area.right, area.top,
         area.left, area.bottom,
         area.right, area.bottom,
-    ].ptr, GL_STATIC_DRAW);
+    ]).ptr, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, null);
 
     // Enable UVs array
