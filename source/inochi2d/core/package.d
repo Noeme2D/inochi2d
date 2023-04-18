@@ -172,28 +172,8 @@ package(inochi2d) {
             // ES 2.0 port: guess what, we don't even have native stencil-with-depth support
             glGenTextures(1, &fAlbedo);
             glGenRenderbuffers(1, &fStencil);
-
             glGenTextures(1, &cfAlbedo);
             glGenRenderbuffers(1, &cfStencil);
-
-            // Attach textures to framebuffer
-            // ES 2.0 port: attach renderbuffer with stencil buffer attached to framebuffer
-            glBindFramebuffer(GL_FRAMEBUFFER, fBuffer);
-            glBindTexture(GL_TEXTURE_2D, fAlbedo);
-            glBindRenderbuffer(GL_RENDERBUFFER, fStencil);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fAlbedo, 0);
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fStencil);
-
-            glBindFramebuffer(GL_FRAMEBUFFER, cfBuffer);
-            glBindTexture(GL_TEXTURE_2D, cfAlbedo);
-            glBindRenderbuffer(GL_RENDERBUFFER, cfStencil);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cfAlbedo, 0);
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, cfStencil);
-
-            // go back to default fb
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            glBindRenderbuffer(GL_RENDERBUFFER, 0);
         }
 
         // Set the viewport and by extension set the textures
@@ -336,9 +316,11 @@ void inSetViewport(int width, int height) nothrow {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
         
         glBindRenderbuffer(GL_RENDERBUFFER, fStencil);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, width, height);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
         glBindFramebuffer(GL_FRAMEBUFFER, fBuffer);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fAlbedo, 0);
@@ -350,9 +332,11 @@ void inSetViewport(int width, int height) nothrow {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
         
         glBindRenderbuffer(GL_RENDERBUFFER, cfStencil);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, width, height);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
         glBindFramebuffer(GL_FRAMEBUFFER, cfBuffer);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cfAlbedo, 0);
